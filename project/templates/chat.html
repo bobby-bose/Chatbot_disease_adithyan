@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Ayurvedic</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styling for the chat container */
+        #chat-container {
+            height: 400px;
+            overflow-y: scroll;
+        }
+        .message {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+        }
+        .sent-message {
+            background-color: #e2e3e5;
+            align-self: flex-start;
+        }
+        .received-message {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+        .warning-message {
+            background-color: #ff0000;
+            color: white;
+            align-self: flex-end;
+        }
+        .message-content {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Chat with Ayurvedic ChatBot</h1>
+        <div id="chat-container" class="mt-4">
+            {% for message in messages %}
+                <div class="message {% if message.sender == user_profile %}sent-message{% else %}{% if 'Please behave properly' in message.content %}warning-message{% else %}received-message{% endif %}{% endif %}">
+                    <p class="message-content">{{ message.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <form method="post" id="message-form" class="mt-4">
+            {% csrf_token %}
+            <div class="input-group">
+                {{ form.content }}
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+   <script>
+    $(document).ready(function() {
+
+        $('#message-form').on('submit', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    // Append new message to chat container
+                    var messageType = (response.content.includes('Please behave properly')) ? 'warning-message' : 'sent-message';
+                    $('#chat-container').append('<div class="message ' + messageType + '"><p class="message-content">' + response.content + '</p></div>');
+                    // Clear the input field
+                    $('#id_content').val('');
+                    // Scroll to bottom
+                    $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // Log any errors to console
+                    // Handle error cases if needed
+                }
+            });
+        });
+    });
+</script>
+
+</body>

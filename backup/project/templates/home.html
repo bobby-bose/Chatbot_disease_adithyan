@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome to the ChatGPT Application</h1>
+    <h2>Your Chat Sessions</h2>
+    <ul>
+        {% for session in sessions %}
+            <li>{{ session.start_time }} - {% if session.end_time %}{{ session.end_time }}{% else %}Ongoing{% endif %} <a href="{% url 'end_session' session.id %}">End Session</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'chat' %}">Start New Chat Session</a>
+</body>
+</html>

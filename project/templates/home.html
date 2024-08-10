@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            border: 3px solid #333;
+        }
+        h1, h2, ul, a {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the ChatGPT Application</h1>
+        <h2>Your Chat Sessions</h2>
+        <ul class="list-group">
+            {% for session in sessions %}
+                <li class="list-group-item">{{ session.start_time }} - {% if session.end_time %}{{ session.end_time }}{% else %}Ongoing{% endif %} <a href="{% url 'end_session' session.id %}">End Session</a></li>
+            {% endfor %}
+        </ul>
+        <a class="btn btn-primary mt-3" href="{% url 'chat' %}">Start New Chat Session</a>
+    </div>
+</body>
+</html>
